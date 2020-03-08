@@ -1,0 +1,14 @@
+# jdbc config
+jdbc:
+  mysql:
+    firstRead:
+      driverClassName: com.mysql.jdbc.Driver
+      url: jdbc:mysql://127.0.0.1:3306/mytest?useUnicode=true&characterEncoding=utf8&autoReconnect=true
+      username: root
+      password: root
+    firstWrite:
+      driverClassName: com.mysql.jdbc.Driver
+      url: jdbc:mysql://127.0.0.1:3306/mytest1?useUnicode=true&characterEncoding=utf8&autoReconnect=true
+      username: root
+      password: root
+  defaultDBId: mysqlFirstReadDataSource
