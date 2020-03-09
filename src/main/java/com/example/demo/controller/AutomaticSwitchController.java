@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
-import com.example.demo.dao.UserBaseInfoDao;
 import com.example.demo.entity.UserBaseInfo;
+import com.example.demo.service.AutomaticSwitchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AutomaticSwitchController {
 
     @Autowired
-    UserBaseInfoDao userBaseInfoDao;
+    AutomaticSwitchService automaticSwitchService;
 
     @RequestMapping(value = "insertTwoDB")
     public String insertTwoDB(String name){
@@ -25,9 +25,7 @@ public class AutomaticSwitchController {
         UserBaseInfo userBaseInfo = new UserBaseInfo();
         userBaseInfo.setAge(30);
         userBaseInfo.setName(name);
-        userBaseInfoDao.insertOneDB(userBaseInfo);
-        userBaseInfoDao.insertTwoDB(userBaseInfo);
-        int a = 1/0;
+        automaticSwitchService.insertDB(userBaseInfo);
         return "ok";
     }
 }

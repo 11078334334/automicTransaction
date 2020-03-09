@@ -1,14 +1,39 @@
 # jdbc config
 jdbc:
   mysql:
+    driverClassName: com.mysql.jdbc.Driver
     firstRead:
-      driverClassName: com.mysql.jdbc.Driver
       url: jdbc:mysql://127.0.0.1:3306/mytest?useUnicode=true&characterEncoding=utf8&autoReconnect=true
       username: root
-      password: root
+      password: 123456
     firstWrite:
-      driverClassName: com.mysql.jdbc.Driver
       url: jdbc:mysql://127.0.0.1:3306/mytest1?useUnicode=true&characterEncoding=utf8&autoReconnect=true
       username: root
-      password: root
+      password: 123456
   defaultDBId: mysqlFirstReadDataSource
+  atomikos:
+    poolSize: 10
+    maxPoolSize: 100
+    borrowConnectionTimeout: 600
+    testQuery: SELECT 1
+    maxLifetime: 60
+    maxIdleTime: 10
+    maintenanceInterval: 30
+    transaction:
+      #单位: 秒
+      timeout: 300
+      maxActives: 100
+  guide:
+    parent:
+      initialSize: 20
+      maxActive: 100
+      minIdle: 10
+      logAbandoned: true
+      removeAbandoned: true
+      removeAbandonedTimeout: 1800
+      maxWait: 60000
+      testOnBorrow: true
+      testWhileIdle: true
+      timeBetweenEvictionRunsMillis: 8500
+      minEvictableIdleTimeMillis: 30000
+      validationQuery: SELECT 1

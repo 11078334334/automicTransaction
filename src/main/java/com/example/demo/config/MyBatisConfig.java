@@ -2,13 +2,15 @@ package com.example.demo.config;
 
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
-import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
-import javax.annotation.Resource;
 import javax.sql.DataSource;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * mybatis的配置
@@ -19,26 +21,37 @@ import javax.sql.DataSource;
 @Configuration
 public class MyBatisConfig {
 
-    @Resource(name = "manyDataSource")
-    private DataSource dataSource;
-
-    /**
-     * 生成SqlSessionFactory
-     * 将自定义的多数据源放到sqlSessionFactoryBean中
-     * @return
-     * @throws Exception
-     */
     @Bean
-    public SqlSessionFactory sqlSessionFactory() throws Exception{
+    @Primary
+    public SqlSessionFactory mysqlFirstReadDataSourceSessionFactory(@Qualifier("mysqlFirstReadDataSource") DataSource mysqlFirstReadDataSource) throws Exception{
         SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
-        sqlSessionFactoryBean.setDataSource(dataSource);
+        sqlSessionFactoryBean.setDataSource(mysqlFirstReadDataSource);
         sqlSessionFactoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath:mapper/**/*.xml"));
         return sqlSessionFactoryBean.getObject();
     }
 
     @Bean
-    public SqlSessionTemplate sqlSessionTemplate(SqlSessionFactory sqlSessionFactory){
-        return new SqlSessionTemplate(sqlSessionFactory);
+    public SqlSessionFactory mysqlFirstWriteDataSourceSessionFactory(@Qualifier("mysqlFirstWriteDataSource")DataSource mysqlFirstWriteDataSource) throws Exception{
+        SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
+        sqlSessionFactoryBean.setDataSource(mysqlFirstWriteDataSource);
+        sqlSessionFactoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath:mapper/**/*.xml"));
+        return sqlSessionFactoryBean.getObject();
     }
+
+    @Bean
+    public CustomSqlSessionTemplate sqlSessionTemplate(@Qualifier("mysqlFirstReadDataSourceSessionFactory") SqlSessionFactory mysqlFirstReadDataSourceSessionFactory,
+                                                       @Qualifier("mysqlFirstWriteDataSourceSessionFactory") SqlSessionFactory mysqlFirstWriteDataSourceSessionFactory
+
+    ){
+        Map<Object, SqlSessionFactory> sf = new HashMap<>();
+        sf.put("mysqlFirstReadDataSource",mysqlFirstReadDataSourceSessionFactory);
+        sf.put("mysqlFirstWriteDataSource",mysqlFirstWriteDataSourceSessionFactory);
+
+        CustomSqlSessionTemplate customSqlSessionTemplate = new CustomSqlSessionTemplate(mysqlFirstReadDataSourceSessionFactory);
+        customSqlSessionTemplate.setDefaultTargetSqlSessionFactory(mysqlFirstReadDataSourceSessionFactory);
+        customSqlSessionTemplate.setTargetSqlSessionFactorys(sf);
+        return customSqlSessionTemplate;
+    }
+
 
 }
