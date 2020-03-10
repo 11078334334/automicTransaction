@@ -1,7 +1,9 @@
 # automicTransaction
 一个单体服务的多数据源的切换，以及针对多数据源夸库的事务的保证
 运行步骤：
+
 clone源码之后，需要创建两个mysql的数据库，mytest以及mytest1,这两个库中都创建如下user_base_info这张表，如果采用的是远程的mysql数据库的话，对应修改application.yml的数据库链接
+
 =======sql脚本：======
 
 CREATE TABLE `user_base_info` (
